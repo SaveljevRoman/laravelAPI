@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\BaseController;
+use App\Http\Requests\DeskStoreRequest;
 use App\Http\Resources\DeskResource;
 use App\Models\Desk;
 use Illuminate\Http\Request;
@@ -21,9 +22,12 @@ class DeskController extends BaseController
     /**
      * Сохранить новую доску
      */
-    public function store(Request $request)
+    public function store(DeskStoreRequest $request)
     {
-        //
+        //метод validated нужен что бы записывались в бд только провалидированные поля, а остальные игнорировались
+        $created_desk = Desk::create($request->validated());
+
+        return new DeskResource($created_desk);
     }
 
     /**
