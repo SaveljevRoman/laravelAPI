@@ -6,7 +6,7 @@ use App\Http\Controllers\BaseController;
 use App\Http\Requests\DeskStoreRequest;
 use App\Http\Resources\DeskResource;
 use App\Models\Desk;
-use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class DeskController extends BaseController
 {
@@ -16,7 +16,7 @@ class DeskController extends BaseController
     public function index()
     {
         //ресурс выбирает только необходимые поля
-        return DeskResource::collection(Desk::with('lists')->get());
+        return DeskResource::collection(Desk::all());
     }
 
     /**
@@ -33,24 +33,28 @@ class DeskController extends BaseController
     /**
      * Показать доску по id
      */
-    public function show($id)
+    public function show(Desk $desk)
     {
-        return new DeskResource(Desk::with('lists')->findOrFail($id));
+        return new DeskResource($desk);
     }
 
     /**
      * Изменить доску по id
      */
-    public function update(Request $request, $id)
+    public function update(DeskStoreRequest $request, Desk $desk)
     {
-        //
+        $desk->update($request->validated());
+
+        return new DeskResource($desk);
     }
 
     /**
      * Удалить доску по id
      */
-    public function destroy($id)
+    public function destroy(Desk $desk)
     {
-        //
+        $desk->delete();
+
+        return response(null, Response::HTTP_NO_CONTENT);
     }
 }
